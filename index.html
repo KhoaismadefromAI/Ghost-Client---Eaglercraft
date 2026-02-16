@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" style="width:100%;height:100%;background-color:black;">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Phantom Client</title>
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='black'/><path d='M30,70 Q30,30 50,30 Q70,30 70,70 L65,65 L55,75 L45,65 L35,75 Z' fill='%2300ffcc' opacity='0.8'/><circle cx='42' cy='50' r='3' fill='black'/><circle cx='58' cy='50' r='3' fill='black'/><rect x='68' y='45' width='4' height='20' rx='1' fill='%23888' transform='rotate(20 70 55)'/><rect x='65' y='60' width='10' height='2' fill='%23555' transform='rotate(20 70 55)'/></svg>">
+
+<script type="text/javascript">
+"use strict";
+
+// %%%%%%%%% 1. BEAST ENGINE SETTINGS %%%%%%%%%%%%
+window.eaglercraftXOpts = {
+    container: "game_frame",
+    worldsDB: "worlds",
+    forceWebGL1: true,             
+    useWASMGC: true,               
+    html5Cursor: true,             
+    smoothFps: true,               
+    fastMath: true,                
+    enableMuliDraw: true,          
+    servers: [
+        { addr: "wss://mc.lamplifesteal.xyz", name: "§6§lLamp§f§lLifesteal" },
+        { addr: "wss://mc.arch.lol", name: "§b§lArchMC §8| §fHub" },
+        { addr: "wss://zentic.cc", name: "§d§lZentic §8| §fPvP" },
+        { addr: "wss://ggsmp.net/", name: "§5§lGG SMP §8| §fSurvival" },
+        { addr: "wss://voidsent.net/", name: "§8§lVoidsent §8| §fAnarchy" }
+    ],
+    relays: [{ addr: "wss://relay.deev.is/", primary: true }],
+    assetsURI: "https://raw.githubusercontent.com/Lax1dude/eaglercraftx-1.8.8/main/stable-download/assets.epk"
+};
+
+// %%%%%%%%% 2. SUMMONING LOGIC %%%%%%%%%%%%
+function launch() {
+    const btn = document.getElementById('launchBtn');
+    const bar = document.getElementById('load_bar');
+    const fill = document.getElementById('load_fill');
+    
+    btn.style.display = "none";
+    bar.style.display = "block";
+    
+    // Engine load progress simulation
+    let p = 0;
+    const interval = setInterval(() => {
+        p += (100 - p) * 0.1;
+        fill.style.width = p + "%";
+    }, 150);
+
+    const s = document.createElement("script");
+    // Main Stable Eaglercraft Engine Core
+    s.src = "https://cdn.jsdelivr.net/gh/Lax1dude/eaglercraftx-1.8.8@main/stable-download/classes.js";
+    
+    s.onload = () => {
+        clearInterval(interval);
+        fill.style.width = "100%";
+        setTimeout(() => {
+            document.getElementById('ghost_ui').style.opacity = '0';
+            setTimeout(() => { document.getElementById('ghost_ui').remove(); }, 600);
+        }, 300);
+    };
+    
+    document.head.appendChild(s);
+}
+</script>
+
+<style>
+    body, html { margin: 0; background: #000; overflow: hidden; height: 100%; font-family: 'Inter', sans-serif; color: #fff; }
+    #game_frame { width: 100%; height: 100%; position: absolute; top:0; left:0; }
+    
+    #ghost_ui { 
+        position: fixed; inset: 0; background: #050005; z-index: 100; 
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        transition: opacity 0.6s ease;
+    }
+
+    .title { color: #00ffcc; font-size: clamp(30px, 10vw, 60px); letter-spacing: 20px; text-shadow: 0 0 20px #00ffcc; margin-bottom: 20px; font-weight: 100; }
+    
+    /* SIGN UP AREA */
+    .auth-box { background: #080008; border: 1px solid #00ffcc33; padding: 25px; display: flex; flex-direction: column; margin-bottom: 40px; border-radius: 4px; }
+    .auth-in { background: #000; border: 1px solid #00ffcc33; color: #00ffcc; padding: 12px; margin: 5px; width: 220px; font-size: 11px; text-align: center; outline: none; }
+    .auth-btn { background: #00ffcc; border: none; color: #000; padding: 12px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+    .auth-btn:hover { background: #fff; }
+
+    /* LAUNCH BUTTON */
+    .l-btn { background: transparent; border: 2px solid #00ffcc; color: #00ffcc; padding: 20px 80px; font-weight: bold; cursor: pointer; letter-spacing: 10px; transition: 0.4s; }
+    .l-btn:hover { background: #00ffcc; color: #000; box-shadow: 0 0 50px #00ffcc; }
+    
+    /* LOADING BAR */
+    #load_bar { width: 300px; height: 2px; background: #111; display: none; margin-top: 20px; }
+    #load_fill { width: 0%; height: 100%; background: #00ffcc; box-shadow: 0 0 10px #00ffcc; transition: 0.3s; }
+    
+    .footer { position: absolute; bottom: 20px; color: #222; font-size: 10px; letter-spacing: 2px; }
+</style>
+</head>
+<body>
+    <div id="ghost_ui">
+        <h1 class="title">PHANTOM</h1>
+        
+        <div class="auth-box">
+            <input type="text" placeholder="GHOST ID" class="auth-in">
+            <input type="password" placeholder="KEY" class="auth-in">
+            <button class="auth-btn" onclick="alert('Profile Synced to Ghost-Cloud')">SIGN UP</button>
+        </div>
+
+        <button class="l-btn" id="launchBtn" onclick="launch()">SUMMON</button>
+        
+        <div id="load_bar">
+            <div id="load_fill"></div>
+        </div>
+        
+        <div class="footer">ENGINE: RESENT 5.1 | WASM-GC ACTIVE</div>
+    </div>
+    
+    <div id="game_frame"></div>
+</body>
+</html>
